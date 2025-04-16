@@ -132,11 +132,11 @@ const AthleteDashboard = () => {
         id: "1",
         author: {
           name: "Shikhar Dhawan",
-          avatar: "/placeholder.svg?height=40&width=40",
+          avatar: "src/assets/Shikar Dawan.jpg",
         },
         content:
-          "Sharing my latest training and match highlights! Grateful for the journey and teammates who push me forward!",
-        images: ["/placeholder.svg?height=200&width=300", "/placeholder.svg?height=200&width=300"],
+          "Proud of the boys for putting up a solid performance! Always special to contribute on the field and share these moments with the team. The grind continues, and the hunger never fades. Jai Hind! 🇮🇳💪🏏 #GabbarStyle #OnTheGo #CricketDiaries",
+        images: ["src/assets/Post 1.1.webp", "src/assets/Post 1.2.webp"],
         timestamp: new Date(Date.now() - 56 * 60 * 1000), // 56 mins ago
         likes: 2600,
         comments: 297,
@@ -146,12 +146,12 @@ const AthleteDashboard = () => {
       {
         id: "2",
         author: {
-          name: "Shikhar Dhawan",
-          avatar: "/placeholder.svg?height=40&width=40",
+          name: "Hima Das",
+          avatar: "src/assets/Hima Das.jpg",
         },
         content:
-          "Sharing my latest training and match highlights! Grateful for the journey and teammates who push me forward!",
-        images: ["/placeholder.svg?height=200&width=300", "/placeholder.svg?height=200&width=300"],
+          "Every stride on the track is powered by passion, discipline, and the dream to make my country proud 🇮🇳💫. Grateful for another win and the love from all of you! Let’s keep running forward — together. 🏃‍♀🔥 #HimaDas #DhingExpress #TrackAndField #ProudToRepresent",
+        images: ["src/assets/Post 2.1.webp", "src/assets/Post 2.2.jpg"],
         timestamp: new Date(Date.now() - 120 * 60 * 1000), // 2 hours ago
         likes: 2600,
         comments: 297,
@@ -182,8 +182,8 @@ const AthleteDashboard = () => {
           {/* Status update */}
           <div className="bg-white rounded-lg shadow mb-6 p-4">
             <div className="flex items-start space-x-4">
-              <img
-                src={`https://ui-avatars.com/api/?name=${athleteData?.fullName || "User"}&background=FFD700&color=fff`}
+            <img
+                src="src\assets\Profile M.png"
                 alt="Profile"
                 className="h-10 w-10 rounded-full"
               />
@@ -395,7 +395,7 @@ const AthleteDashboard = () => {
                   </div>
                   <div className="p-4 border-t flex items-center space-x-2">
                     <img
-                      src={`https://ui-avatars.com/api/?name=${athleteData?.fullName || "User"}&background=FFD700&color=fff`}
+                      src="src\assets\Profile M.png"
                       alt="Profile"
                       className="h-8 w-8 rounded-full"
                     />
@@ -503,7 +503,7 @@ const AthleteDashboard = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <img
-                          src="/placeholder.svg?height=40&width=40"
+                          src="src\assets\Profile F.png"
                           alt="Profile"
                           className="h-10 w-10 rounded-full"
                         />
@@ -517,7 +517,7 @@ const AthleteDashboard = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <img
-                          src="/placeholder.svg?height=40&width=40"
+                          src="src\assets\Profile F.png"
                           alt="Profile"
                           className="h-10 w-10 rounded-full"
                         />
@@ -531,7 +531,7 @@ const AthleteDashboard = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <img
-                          src="/placeholder.svg?height=40&width=40"
+                          src="src\assets\Profile F.png"
                           alt="Profile"
                           className="h-10 w-10 rounded-full"
                         />
