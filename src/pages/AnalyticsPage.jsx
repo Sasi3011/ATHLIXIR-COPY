@@ -7,7 +7,7 @@ import Sidebar from "../components/Sidebar"
 import { getAthleteProfile } from "../api/athletes"
 import { getPerformanceData, getMedicalDocuments, uploadMedicalDocument } from "../api/performance"
 import DocumentUploadModal from "../components/DocumentUploadModal"
-
+import DocumentImageDisplay from "../components/DocumentImageDisplay"
 const AnalyticsPage = () => {
   const navigate = useNavigate()
   const { currentUser } = useAuth()
@@ -44,20 +44,28 @@ const AnalyticsPage = () => {
 
   const handleUploadDocument = async (documentData) => {
     try {
-      setLoading(true)
-      await uploadMedicalDocument(currentUser.email, documentData)
-      setShowUploadModal(false)
-
+      setLoading(true);
+      
+      // Store the original file object for display purposes
+      const documentWithFile = {
+        ...documentData,
+        // Ensure the file is preserved for display
+        file: documentData.file
+      };
+      
+      await uploadMedicalDocument(currentUser.email, documentWithFile);
+      setShowUploadModal(false);
+  
       // Refresh medical documents
-      const documents = await getMedicalDocuments(currentUser.email)
-      setMedicalDocuments(documents)
+      const documents = await getMedicalDocuments(currentUser.email);
+      setMedicalDocuments(documents);
     } catch (error) {
-      console.error("Error uploading document:", error)
-      setError("Failed to upload document")
+      console.error("Error uploading document:", error);
+      setError("Failed to upload document");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleDownloadDocument = (documentId) => {
     // In a real application, this would trigger a download of the document
@@ -410,15 +418,9 @@ const AnalyticsPage = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div className="md:col-span-1">
-                        <div className="border border-gray-200 rounded-lg overflow-hidden">
-                          <img
-                            src={doc.imageUrl || "/placeholder.svg?height=300&width=200"}
-                            alt="Medical Document"
-                            className="w-full h-auto"
-                          />
-                        </div>
-                      </div>
+                    <div className="md:col-span-1">
+  <DocumentImageDisplay document={doc} />
+</div>
                       <div className="md:col-span-2">
                         <div className="bg-gray-50 p-4 rounded-lg h-full">
                           <h4 className="font-medium mb-2">Verification Results</h4>
