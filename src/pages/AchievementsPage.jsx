@@ -17,7 +17,7 @@ const AchievementsPage = () => {
   const { currentUser } = useAuth()
   const [athleteData, setAthleteData] = useState(null)
   const [achievements, setAchievements] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [activeTab, setActiveTab] = useState("recent")
   const [sortBy, setSortBy] = useState("updated")
