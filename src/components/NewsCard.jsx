@@ -40,8 +40,8 @@ const NewsCard = ({ article, size = "large" }) => {
   return (
     <div className="mb-8">
       <div className="relative">
-        <img
-          src={urlToImage || "/placeholder.jpg"}
+          <img
+          src={(urlToImage?.startsWith("http://") ? urlToImage.replace("http://", "https://") : urlToImage) || "/placeholder.jpg"}
           alt={title}
           className="w-full h-56 object-cover rounded-lg"
           onError={(e) => {
@@ -49,6 +49,7 @@ const NewsCard = ({ article, size = "large" }) => {
             e.target.src = "/placeholder.jpg"
           }}
         />
+
         <div className="absolute top-3 right-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm">
           {sportCategory}
         </div>
