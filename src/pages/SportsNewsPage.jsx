@@ -29,7 +29,7 @@ const SportsNewsPage = () => {
   // Existing state
   const [newsArticles, setNewsArticles] = useState([])
   const [trendingNews, setTrendingNews] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [activeCategory, setActiveCategory] = useState("All")
   const [searchQuery, setSearchQuery] = useState("")

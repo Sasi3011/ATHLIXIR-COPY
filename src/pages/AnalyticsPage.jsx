@@ -14,7 +14,7 @@ const AnalyticsPage = () => {
   const [athleteData, setAthleteData] = useState(null)
   const [performanceData, setPerformanceData] = useState(null)
   const [medicalDocuments, setMedicalDocuments] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [showUploadModal, setShowUploadModal] = useState(false)
 
