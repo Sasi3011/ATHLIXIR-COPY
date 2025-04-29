@@ -6,26 +6,8 @@ import { MapPin, Search, X, Star, Filter, ChevronDown, Phone, Globe, Clock, Awar
 import { getAcademies, getAvailableSports, getNearbyAcademies } from "../api/academies"
 import Sidebar from "../components/Sidebar"
 import PageHeader from "../components/PageHeader"
-
-// Load Google Maps API script
-const loadGoogleMapsScript = (callback) => {
-  const existingScript = document.getElementById("googleMapsScript")
-  if (!existingScript) {
-    const script = document.createElement("script")
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBMRmwzY1DS_nM76lq35b5LWgaLTPyrcto`
-    script.id = "googleMapsScript"
-    script.async = true
-    script.onload = () => {
-      if (callback) callback()
-    }
-    script.onerror = () => {
-      console.error("Failed to load Google Maps API")
-      // Still call callback so the rest of the page can load
-      if (callback) callback()
-    }
-    document.body.appendChild(script)
-  } else if (callback) callback()
-}
+import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
 
 const AcademyLocatorPage = () => {
   const [academies, setAcademies] = useState([])
@@ -33,7 +15,7 @@ const AcademyLocatorPage = () => {
   const [selectedAcademy, setSelectedAcademy] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [userLocation, setUserLocation] = useState(null)
-  const [mapLoaded, setMapLoaded] = useState(false)
+  const [mapLoaded, setMapLoaded] = useState(true) // Always true since we don't need to load external script
   const [map, setMap] = useState(null)
   const [markers, setMarkers] = useState([])
   const [activeTab, setActiveTab] = useState("nearby")
@@ -46,6 +28,17 @@ const AcademyLocatorPage = () => {
   const mapRef = useRef(null)
   const searchInputRef = useRef(null)
   const navigate = useNavigate()
+  const leafletMapRef = useRef(null) // Reference to store the Leaflet map instance
+
+  // Fix for Leaflet marker icon issue in React
+  useEffect(() => {
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+      iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+    });
+  }, []);
 
   // Update the loadAllAcademies function to be properly memoized
   const loadAllAcademies = useCallback(async () => {
@@ -75,90 +68,65 @@ const AcademyLocatorPage = () => {
     }
   }, [])
 
-  // Initialize Google Maps
+  // Initialize map when component mounts
   useEffect(() => {
     // Load academies immediately when component mounts
     loadAllAcademies()
 
-    // Then try to load the map
-    loadGoogleMapsScript(() => {
-      setMapLoaded(true)
-    })
-  }, [loadAllAcademies]) // Add loadAllAcademies as a dependency
+    // Initialize Leaflet map
+    if (mapRef.current && !leafletMapRef.current) {
+      // Default center (India)
+      const defaultCenter = [20.5937, 78.9629]; // Note: Leaflet uses [lat, lng] format
 
-  // Initialize map when the script is loaded
-  useEffect(() => {
-    if (mapLoaded && mapRef.current && !map) {
-      try {
-        // Default center (India)
-        const defaultCenter = { lat: 20.5937, lng: 78.9629 }
+      // Create Leaflet map
+      const mapInstance = L.map(mapRef.current).setView(defaultCenter, 5);
+      
+      // Add OpenStreetMap tile layer
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+      }).addTo(mapInstance);
 
-        const mapInstance = new window.google.maps.Map(mapRef.current, {
-          center: userLocation || defaultCenter,
-          zoom: 5,
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: true,
-          zoomControl: true,
-          styles: [
-            {
-              featureType: "poi",
-              elementType: "labels",
-              stylers: [{ visibility: "off" }],
-            },
-          ],
-        })
+      // Store map instance in ref and state
+      leafletMapRef.current = mapInstance;
+      setMap(mapInstance);
 
-        setMap(mapInstance)
+      // Try to get user's location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const userPos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+            setUserLocation(userPos);
+            
+            // Center map on user location
+            mapInstance.setView([userPos.lat, userPos.lng], 12);
 
-        // Try to get user's location
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const userPos = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-              }
-              setUserLocation(userPos)
-              mapInstance.setCenter(userPos)
-              mapInstance.setZoom(12)
+            // Add user marker
+            const userIcon = L.divIcon({
+              className: 'user-location-marker',
+              html: '<div style="background-color: #4285F4; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white;"></div>',
+              iconSize: [20, 20],
+              iconAnchor: [10, 10],
+            });
 
-              // Add user marker
-              new window.google.maps.Marker({
-                position: userPos,
-                map: mapInstance,
-                icon: {
-                  path: window.google.maps.SymbolPath.CIRCLE,
-                  scale: 10,
-                  fillColor: "#4285F4",
-                  fillOpacity: 1,
-                  strokeColor: "#ffffff",
-                  strokeWeight: 2,
-                },
-                title: "Your Location",
-              })
+            L.marker([userPos.lat, userPos.lng], { icon: userIcon, title: 'Your Location' }).addTo(mapInstance);
 
-              // Load nearby academies
-              loadNearbyAcademies(userPos)
-            },
-            (error) => {
-              console.error("Error getting user location:", error)
-              loadAllAcademies()
-            },
-          )
-        } else {
-          loadAllAcademies()
-        }
-      } catch (error) {
-        console.error("Error initializing map:", error)
-        // Load academies even if map fails to initialize
-        loadAllAcademies()
+            // Load nearby academies
+            loadNearbyAcademies(userPos);
+          },
+          (error) => {
+            console.error("Error getting user location:", error);
+            loadAllAcademies();
+          }
+        );
+      } else {
+        loadAllAcademies();
       }
-    } else if (!mapLoaded) {
-      // Load academies even if map is not loaded yet
-      loadAllAcademies()
     }
-  }, [mapLoaded, map, userLocation, loadAllAcademies, loadNearbyAcademies])
+  }, [loadAllAcademies, loadNearbyAcademies]);
 
   // Add a useEffect to ensure academies are loaded even if map initialization fails
   useEffect(() => {
@@ -188,53 +156,54 @@ const AcademyLocatorPage = () => {
 
   // Update markers when academies change
   useEffect(() => {
-    if (map && filteredAcademies.length > 0) {
+    if (map && filteredAcademies.length > 0 && leafletMapRef.current) {
       // Clear existing markers
-      markers.forEach((marker) => marker.setMap(null))
+      markers.forEach((marker) => {
+        if (leafletMapRef.current) {
+          leafletMapRef.current.removeLayer(marker);
+        }
+      });
 
       // Create bounds object to fit all markers
-      const bounds = new window.google.maps.LatLngBounds()
+      const bounds = L.latLngBounds();
 
       // Add user location to bounds if available
       if (userLocation) {
-        bounds.extend(userLocation)
+        bounds.extend([userLocation.lat, userLocation.lng]);
       }
 
       // Create new markers
       const newMarkers = filteredAcademies.map((academy) => {
-        const marker = new window.google.maps.Marker({
-          position: academy.location,
-          map: map,
-          title: academy.name,
-          animation: window.google.maps.Animation.DROP,
-        })
+        const marker = L.marker([academy.location.lat, academy.location.lng], {
+          title: academy.name
+        }).addTo(leafletMapRef.current);
 
         // Add click event to marker
-        marker.addListener("click", () => {
-          setSelectedAcademy(academy)
-          map.panTo(academy.location)
-        })
+        marker.on('click', () => {
+          setSelectedAcademy(academy);
+          leafletMapRef.current.panTo([academy.location.lat, academy.location.lng]);
+        });
+
+        // Add popup with academy name
+        marker.bindPopup(academy.name);
 
         // Add academy location to bounds
-        bounds.extend(academy.location)
+        bounds.extend([academy.location.lat, academy.location.lng]);
 
-        return marker
-      })
+        return marker;
+      });
 
-      setMarkers(newMarkers)
+      setMarkers(newMarkers);
 
       // Fit map to bounds if we have markers
       if (newMarkers.length > 0) {
-        map.fitBounds(bounds)
-
-        // Don't zoom in too far
-        const listener = window.google.maps.event.addListener(map, "idle", () => {
-          if (map.getZoom() > 16) map.setZoom(16)
-          window.google.maps.event.removeListener(listener)
-        })
+        leafletMapRef.current.fitBounds(bounds, {
+          padding: [50, 50],
+          maxZoom: 16
+        });
       }
     }
-  }, [map, filteredAcademies, userLocation])
+  }, [map, filteredAcademies, userLocation]);
 
   // Handle search input change
   const handleSearchChange = useCallback(
@@ -475,9 +444,8 @@ const AcademyLocatorPage = () => {
                       }`}
                       onClick={() => {
                         setSelectedAcademy(academy)
-                        if (map) {
-                          map.panTo(academy.location)
-                          map.setZoom(15)
+                        if (leafletMapRef.current) {
+                          leafletMapRef.current.setView([academy.location.lat, academy.location.lng], 15)
                         }
                       }}
                     >
@@ -511,7 +479,7 @@ const AcademyLocatorPage = () => {
             </div>
           </div>
 
-          {/* Map */}
+          {/* Map Container */}
           <div className="flex-1 relative">
             <div ref={mapRef} className="absolute inset-0"></div>
 
@@ -601,9 +569,9 @@ const AcademyLocatorPage = () => {
                     <button
                       className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors"
                       onClick={() => {
-                        // In a real app, this would open directions
+                        // Open directions in OpenStreetMap
                         window.open(
-                          `https://www.google.com/maps/dir/?api=1&destination=${selectedAcademy.location.lat},${selectedAcademy.location.lng}`,
+                          `https://www.openstreetmap.org/directions?from=${userLocation ? userLocation.lat + ',' + userLocation.lng : ''}&to=${selectedAcademy.location.lat},${selectedAcademy.location.lng}`,
                           "_blank",
                         )
                       }}
@@ -615,8 +583,6 @@ const AcademyLocatorPage = () => {
               </div>
             )}
           </div>
-          {/* Google Map Container */}
-          <div ref={mapRef} id="map" className="flex-1 h-full" style={{ minHeight: "500px", display: "block" }}></div>
         </main>
 
         {/* Footer */}
