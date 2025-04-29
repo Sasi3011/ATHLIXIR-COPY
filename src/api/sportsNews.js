@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const API_KEY = "1a3747bbced647cd9154be20bd974c65"
+const API_KEY = "773428f9f5bd45b089375d79807b815c"
 const BASE_URL = "https://newsapi.org/v2"
 
 // Get all sports news
