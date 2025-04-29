@@ -17,7 +17,7 @@ const AIAssistantPage = () => {
   const { currentUser } = useAuth()
   const [athleteData, setAthleteData] = useState(null)
   const [performanceData, setPerformanceData] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [inputMessage, setInputMessage] = useState("")
   const [messages, setMessages] = useState([])

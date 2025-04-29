@@ -14,7 +14,7 @@ const MessagesPage = () => {
   const navigate = useNavigate()
   const { currentUser } = useAuth()
   const [athleteData, setAthleteData] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [conversations, setConversations] = useState([])
   const [activeTab, setActiveTab] = useState("open")

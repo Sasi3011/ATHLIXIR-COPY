@@ -40,7 +40,7 @@ const AcademyLocatorPage = () => {
   const [availableSports, setAvailableSports] = useState(["All"])
   const [selectedSport, setSelectedSport] = useState("All")
   const [sortBy, setSortBy] = useState("distance")
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
 
   const mapRef = useRef(null)
