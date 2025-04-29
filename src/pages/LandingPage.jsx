@@ -6,11 +6,11 @@ import Header from "../components/Header"
 import Footer from "../components/Footer"
 import {AboutUs} from "../assets/About Us.png"
 import {Performance} from "../assets/Performance.png"
-import {Top} from "../assets/LandingPageTop.png"
+import {Top} from "../assets/Landing Page Top.png"
 import {Optimize} from "../assets/Optimize.png"
-import {Contact1} from "../assets/Contact 1"
-import {Contact2} from "../assets/Contact 2"
-import {Contact3} from "../assets/Contact 3"
+import {Contact1} from "../assets/Contact 1.png"
+import {Contact2} from "../assets/Contact 2.png"
+import {Contact3} from "../assets/Contact 3.png"
 const LandingPage = () => {
   const aboutRef = useRef(null)
   const featuresRef = useRef(null)
