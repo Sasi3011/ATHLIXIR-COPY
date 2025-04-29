@@ -12,7 +12,7 @@ import Shikar from "../assets/Shikar Dawan.jpg"
 import Himadas from "../assets/Hima Das.jpg"
 import Post01 from "../assets/Post 1.1.jpg"
 import Post02 from "../assets/Post 1.2.jpg"
-import Poast03 from "../assets/Post 2.1.jpg"
+import Post03 from "../assets/Post 2.1.jpg"
 import Post04 from "../assets/Post 2.2.jpg"
 
 
@@ -160,7 +160,7 @@ const AthleteDashboard = () => {
         },
         content:
           "Every stride on the track is powered by passion, discipline, and the dream to make my country proud 🇮🇳💫. Grateful for another win and the love from all of you! Let’s keep running forward — together. 🏃‍♀🔥 #HimaDas #DhingExpress #TrackAndField #ProudToRepresent",
-        images: [{Poast03}, {Post04}],
+        images: [{Post03}, {Post04}],
         timestamp: new Date(Date.now() - 120 * 60 * 1000), // 2 hours ago
         likes: 2600,
         comments: 297,
