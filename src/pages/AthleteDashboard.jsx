@@ -141,11 +141,11 @@ const AthleteDashboard = () => {
         id: "1",
         author: {
           name: "Shikhar Dhawan",
-          avatar: {Shikar},
+          avatar: Shikar,
         },
         content:
           "Proud of the boys for putting up a solid performance! Always special to contribute on the field and share these moments with the team. The grind continues, and the hunger never fades. Jai Hind! 🇮🇳💪🏏 #GabbarStyle #OnTheGo #CricketDiaries",
-        images: [{Post01}, {Post02}],
+        images: [Post01, Post02],
         timestamp: new Date(Date.now() - 56 * 60 * 1000), // 56 mins ago
         likes: 2600,
         comments: 297,
@@ -156,11 +156,11 @@ const AthleteDashboard = () => {
         id: "2",
         author: {
           name: "Hima Das",
-          avatar: {Himadas},
+          avatar: Himadas,
         },
         content:
           "Every stride on the track is powered by passion, discipline, and the dream to make my country proud 🇮🇳💫. Grateful for another win and the love from all of you! Let’s keep running forward — together. 🏃‍♀🔥 #HimaDas #DhingExpress #TrackAndField #ProudToRepresent",
-        images: [{Post03}, {Post04}],
+        images: [Post03, Post04],
         timestamp: new Date(Date.now() - 120 * 60 * 1000), // 2 hours ago
         likes: 2600,
         comments: 297,
