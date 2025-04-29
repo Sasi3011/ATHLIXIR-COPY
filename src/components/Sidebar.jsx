@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-// import Logo from "../assets/logo.png"
+import Logo from "../assets/Logo.png"
 import { Link, useLocation } from "react-router-dom"
 import {
   LayoutGrid,
@@ -47,7 +47,7 @@ const Sidebar = ({ activePage }) => {
     <div className="w-60 bg-white border-r border-gray-200 flex flex-col h-screen">
       <div className="p-5 border-b border-gray-200 shadow-sm">
         <Link to="/dashboard" className="flex items-center">
-          {/* <img src={Logo} alt="Athlixir" className="h-8" /> */}
+          <img src={Logo} alt="Athlixir" className="h-8" />
           <span className="ml-2 text-xl font-bold text-yellow-500">Athlixir</span>
         </Link>
       </div>
