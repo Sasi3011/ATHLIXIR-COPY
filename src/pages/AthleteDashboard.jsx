@@ -10,10 +10,10 @@ import Male from "../assets/Profile M.png"
 import Female from "../assets/Profile F.png"
 import Shikar from "../assets/Shikar Dawan.jpg"
 import Himadas from "../assets/Hima Das.jpg"
-import Post01 from "../assets/Post 1.1.webp"
-import Post02 from "../assets/Post 1.2.webp"
-import Poast03 from "../assets/Post 2.1.webp"
-import Post04 from "../assets/Post 2.2.webp"
+import Post01 from "../assets/Post 1.1.jpg"
+import Post02 from "../assets/Post 1.2.jpg"
+import Poast03 from "../assets/Post 2.1.jpg"
+import Post04 from "../assets/Post 2.2.jpg"
 
 
 const AthleteDashboard = () => {
