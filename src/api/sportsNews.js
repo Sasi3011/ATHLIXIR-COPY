@@ -1,7 +1,8 @@
 import axios from "axios"
 
-const API_KEY = "1a3747bbced647cd9154be20bd974c65"
-const BASE_URL = "https://newsapi.org/v2"
+// Access API URL and Key from environment variables
+const API_KEY = process.env.REACT_APP_NEWS_API_KEY;
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 // Get all sports news
 export const getAllSportsNews = async (page = 1, pageSize = 10) => {
