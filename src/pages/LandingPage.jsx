@@ -4,13 +4,13 @@ import { useRef } from "react"
 import { Link } from "react-router-dom"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
-// import {AboutUs} from "../src/assets/About Us.png"
-// import {Performance} from "../assets/Performance"
-// import {Top} from "../assets/LandingPageTop"
-// import {Optimize} from "../assets/Optimize"
-// import {Contact1} from "../assets/Contact 1"
-// import {Contact2} from "../assets/Contact 2"
-// import {Contact3} from "../assets/Contact 3"
+import {AboutUs} from "../assets/About Us.png"
+import {Performance} from "../assets/Performance.png"
+import {Top} from "../assets/LandingPageTop.png"
+import {Optimize} from "../assets/Optimize.png"
+import {Contact1} from "../assets/Contact 1"
+import {Contact2} from "../assets/Contact 2"
+import {Contact3} from "../assets/Contact 3"
 const LandingPage = () => {
   const aboutRef = useRef(null)
   const featuresRef = useRef(null)
@@ -46,7 +46,7 @@ const LandingPage = () => {
             </Link>
           </div>
           <div className="md:w-1/2 flex justify-center">
-            <img src="src\assets\Landing Page Top.png" alt="Athletes training" className="w-120 h-100" />
+            <img src={Top}alt="Athletes training" className="w-120 h-100" />
           </div>
         </div>
       </section>
@@ -135,7 +135,7 @@ const LandingPage = () => {
       <section className="bg-gray-50 py-16 md:py-24 lg:py-32">
         <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 mb-10 md:mb-0">
-            <img src="src\assets\About Us.png" alt="ATHLIXIR features" className="w-170 h-100" />
+            <img src={AboutUs} alt="ATHLIXIR features" className="w-170 h-100" />
           </div>
           <div className="md:w-1/2 md:pl-12">
             <h2 className="text-3xl font-bold mb-6">Why ATHLIXIR Stands Out?</h2>
@@ -320,7 +320,7 @@ const LandingPage = () => {
             </div>
             <div className="md:w-1/2 flex justify-center" >
               <img
-                src="src\assets\Performance.png"
+                src={Performance}
                 alt="Performance insights"
                 className="w-120 h-120 rounded-lg shadow-lg"
               />
@@ -330,7 +330,7 @@ const LandingPage = () => {
           <div className="flex flex-col-reverse md:flex-row items-center">
             <div className="md:w-1/2">
               <img
-                src="src\assets\Optimize.png"
+                src={Optimize}
                 alt="Athletic journey"
                 className="w-130 h-100 rounded-lg shadow-lg"
               />
@@ -456,7 +456,7 @@ const LandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <div className="bg-white p-6 rounded-lg shadow-md">
               <img
-                src="src\assets\Contact 1.png"
+                src={Contact1}
                 alt="Training support"
                 className="w-full h-48 object-cover rounded-md mb-4"
               />
@@ -467,7 +467,7 @@ const LandingPage = () => {
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <img
-                src="src\assets\Contact 2.png"
+                src={Contact2}
                 alt="Partnership"
                 className="w-full h-48 object-cover rounded-md mb-4"
               />
@@ -478,7 +478,7 @@ const LandingPage = () => {
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <img
-                src="src\assets\Contact 3.png"
+                src={Contact3}
                 alt="Technical support"
                 className="w-full h-48 object-cover rounded-md mb-4"
               />
