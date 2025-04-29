@@ -8,7 +8,7 @@ import { getAthleteProfile } from "../api/athletes"
 import { getPerformanceData } from "../api/performance"
 import { Mic, Paperclip, ArrowUp } from "lucide-react"
 import { generateAIResponse } from "../api/aiAssistant"
-
+import AI from "../assets/AI.jpg"
 // Import the PageHeader component
 import PageHeader from "../components/PageHeader"
 
@@ -175,9 +175,7 @@ const AIAssistantPage = () => {
                     >
                       {message.sender === "ai" && (
                         <div className="flex-shrink-0 mr-3">
-                          <div className="h-8 w-8 rounded-full bg-yellow-400 flex items-center justify-center text-white">
-                            AI
-                          </div>
+                          <img src={AI} alt="AI Assistant" className="h-8 w-8 rounded-full object-cover" />
                         </div>
                       )}
                       <div
@@ -190,39 +188,29 @@ const AIAssistantPage = () => {
                           {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                         </p>
                       </div>
-                      {message.sender === "user" && (
-                        <div className="flex-shrink-0 ml-3">
-                          <img
-                            src={`https://ui-avatars.com/api/?name=${athleteData?.fullName || "User"}&background=FFD700&color=fff`}
-                            alt="User"
-                            className="h-8 w-8 rounded-full"
-                          />
-                        </div>
-                      )}
+                      {message.sender === "ai" && (
+                      <div className="flex-shrink-0 mr-3">
+                        <img src={AI} alt="AI Assistant" className="h-8 w-8 rounded-full object-cover" />
+                      </div>
+                    )}
+
                     </div>
                   ))}
                   {isTyping && (
                     <div className="flex justify-start">
                       <div className="flex-shrink-0 mr-3">
-                        <div className="h-8 w-8 rounded-full bg-yellow-400 flex items-center justify-center text-white">
-                          AI
-                        </div>
+                        <img src={AI} alt="AI Assistant" className="h-8 w-8 rounded-full object-cover" />
                       </div>
                       <div className="bg-gray-100 rounded-lg px-4 py-2">
                         <div className="flex space-x-1">
                           <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"></div>
-                          <div
-                            className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"
-                            style={{ animationDelay: "0.2s" }}
-                          ></div>
-                          <div
-                            className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"
-                            style={{ animationDelay: "0.4s" }}
-                          ></div>
+                          <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                          <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
                         </div>
                       </div>
                     </div>
                   )}
+
                   <div ref={messagesEndRef} />
                 </div>
               </div>
