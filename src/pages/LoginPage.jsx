@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
-
+import Login from "../components/login.png"
 const LoginPage = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -42,7 +42,7 @@ const LoginPage = () => {
       {/* Left side - Yellow background with illustration */}
       <div className="hidden lg:flex lg:w-1/2 bg-yellow-400 flex-col justify-center items-center p-12">
       <div className="w-full max-w-md">
-          <img src="src\assets\login.png" alt="Athlete dashboard" className="w-100 h-100" />
+          <img src={Login} alt="Athlete dashboard" className="w-100 h-100" />
         </div>
         <div className="text-white mb-8 text-center flex flex-col items-center justify-center">
   <h2 className="text-2xl font-semibold mb-4">Advanced Athlete Management Platform</h2>
