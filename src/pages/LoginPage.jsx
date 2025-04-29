@@ -4,7 +4,10 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import Login from "../assets/login.png"
+<<<<<<< HEAD
 
+=======
+>>>>>>> 95cba3e1a09915e5e2f31d70875e1b554c0c4c17
 const LoginPage = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
