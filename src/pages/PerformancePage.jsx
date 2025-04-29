@@ -15,7 +15,7 @@ const PerformancePage = () => {
   const { currentUser } = useAuth()
   const [athleteData, setAthleteData] = useState(null)
   const [performanceData, setPerformanceData] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [activeTab, setActiveTab] = useState("performance")

@@ -20,7 +20,7 @@ const AthleteDashboard = () => {
   const navigate = useNavigate()
   const { currentUser, logout } = useAuth()
   const [athleteData, setAthleteData] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [showProfileModal, setShowProfileModal] = useState(false)
 
