@@ -6,11 +6,13 @@ const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const socket = require('./socket');
+const { createLogger } = require('vite');
 
 const app = express();
 
 // Environment variable validation
 const { MONGO_URI, JWT_SECRET, FRONTEND_URL } = process.env;
+console.log('MONGO_URI:', MONGO_URI);
 if (!MONGO_URI || !JWT_SECRET || !FRONTEND_URL) {
   console.error('Missing required environment variables');
   process.exit(1);
@@ -18,8 +20,7 @@ if (!MONGO_URI || !JWT_SECRET || !FRONTEND_URL) {
 
 // MongoDB connection
 mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+
 })
   .then(() => console.log('MongoDB connected'))
   .catch((err) => {
