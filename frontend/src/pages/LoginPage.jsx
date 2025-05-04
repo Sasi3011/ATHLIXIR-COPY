@@ -1,57 +1,56 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../context/AuthContext"
-import Login from "../assets/login.png"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import Login from "../assets/login.png";
+
 const LoginPage = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [userType, setUserType] = useState("athlete")
-  const [rememberMe, setRememberMe] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [userType, setUserType] = useState("athlete");
+  // const [rememberMe, setRememberMe] = useState(false); // Commented out until implemented
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const navigate = useNavigate()
-  const { login, updateProfileStatus, setCurrentUser } = useAuth()
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError("")
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
-      const { profileCompleted } = await login(email, password, userType)
+      const { profileCompleted } = await login(email, password, userType);
 
       // Redirect based on profile completion status
       if (userType === "athlete" && !profileCompleted) {
-        navigate("/athlete-details")
+        navigate("/athlete-details");
       } else {
-        navigate("/dashboard")
+        navigate("/dashboard");
       }
     } catch (error) {
-      console.error("Login error:", error)
-      setError(error.message || "Invalid credentials. Please try again.")
+      console.error("Login error:", error);
+      setError(error.message || "Invalid credentials. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex">
       {/* Left side - Yellow background with illustration */}
       <div className="hidden lg:flex lg:w-1/2 bg-yellow-400 flex-col justify-center items-center p-12">
-      <div className="w-full max-w-md">
+        <div className="w-full max-w-md">
           <img src={Login} alt="Athlete dashboard" className="w-100 h-100" />
         </div>
         <div className="text-white mb-8 text-center flex flex-col items-center justify-center">
-  <h2 className="text-2xl font-semibold mb-4">Advanced Athlete Management Platform</h2>
-  <p className="text-lg max-w-xl">
-    Everything you need to seamlessly manage athletes, track performance, and optimize training.
-  </p>
-</div>
-
-        
+          <h2 className="text-2xl font-semibold mb-4">Advanced Athlete Management Platform</h2>
+          <p className="text-lg max-w-xl">
+            Everything you need to seamlessly manage athletes, track performance, and optimize training.
+          </p>
+        </div>
       </div>
 
       {/* Right side - Login form */}
@@ -62,7 +61,9 @@ const LoginPage = () => {
             <p className="text-gray-600">Welcome back! please enter your detail</p>
           </div>
 
-          {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>
+          )}
 
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
@@ -130,7 +131,9 @@ const LoginPage = () => {
                 <button
                   type="button"
                   className={`flex-1 py-2 px-4 text-center rounded-l-md ${
-                    userType === "athlete" ? "bg-yellow-400 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    userType === "athlete"
+                      ? "bg-yellow-400 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                   onClick={() => setUserType("athlete")}
                 >
@@ -153,7 +156,9 @@ const LoginPage = () => {
                 <button
                   type="button"
                   className={`flex-1 py-2 px-4 text-center rounded-r-md ${
-                    userType === "user" ? "bg-yellow-400 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    userType === "user"
+                      ? "bg-yellow-400 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                   onClick={() => setUserType("user")}
                 >
@@ -173,7 +178,7 @@ const LoginPage = () => {
             </div>
 
             <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <input
                   id="remember-me"
                   type="checkbox"
@@ -184,7 +189,7 @@ const LoginPage = () => {
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                   Remember me
                 </label>
-              </div>
+              </div> */}
               <div>
                 <Link to="/forgot-password" className="text-sm text-yellow-400 hover:text-yellow-500">
                   Forgot Password?
@@ -206,30 +211,32 @@ const LoginPage = () => {
           <div className="mt-6 text-center">
             <p className="text-gray-600">Or sign in with</p>
             <div className="mt-4">
-              <button className="w-full py-3 px-4 border border-gray-300 rounded-md flex items-center justify-center text-gray-700 hover:bg-gray-50 transition duration-200">
-              <svg
-  className="h-5 w-5 mr-2"
-  xmlns="http://www.w3.org/2000/svg"
-  viewBox="0 0 533.5 544.3"
->
-  <path
-    fill="#4285F4"
-    d="M533.5 278.4c0-17.7-1.6-35-4.7-51.7H272v97.9h146.9c-6.4 34-25.7 62.7-54.7 81.9v68h88.4c51.6-47.5 80.9-117.4 80.9-196.1z"
-  />
-  <path
-    fill="#34A853"
-    d="M272 544.3c73.7 0 135.6-24.5 180.8-66.4l-88.4-68c-24.6 16.5-56.3 26.2-92.4 26.2-71.1 0-131.4-48-153-112.9h-90.5v70.8c45.4 89.3 137.7 150.3 243.5 150.3z"
-  />
-  <path
-    fill="#FBBC04"
-    d="M119 323.2c-10.1-30-10.1-62.5 0-92.5v-70.8H28.5c-37.7 74.9-37.7 159.2 0 234.1L119 323.2z"
-  />
-  <path
-    fill="#EA4335"
-    d="M272 107.1c39.9-.6 78.1 13.8 107.3 40.6l80.1-80.1C415.3 25.3 345.5-1.3 272 0 166.2 0 73.9 60.9 28.5 150.2l90.5 70.8C140.6 155 200.9 107.1 272 107.1z"
-  />
-</svg>
-
+              <button
+                className="w-full py-3 px-4 border border-gray-300 rounded-md flex items-center justify-center text-gray-700 hover:bg-gray-50 transition duration-200"
+                disabled
+              >
+                <svg
+                  className="h-5 w-5 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 533.5 544.3"
+                >
+                  <path
+                    fill="#4285F4"
+                    d="M533.5 278.4c0-17.7-1.6-35-4.7-51.7H272v97.9h146.9c-6.4 34-25.7 62.7-54.7 81.9v68h88.4c51.6-47.5 80.9-117.4 80.9-196.1z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M272 544.3c73.7 0 135.6-24.5 180.8-66.4l-88.4-68c-24.6 16.5-56.3 26.2-92.4 26.2-71.1 0-131.4-48-153-112.9h-90.5v70.8c45.4 89.3 137.7 150.3 243.5 150.3z"
+                  />
+                  <path
+                    fill="#FBBC04"
+                    d="M119 323.2c-10.1-30-10.1-62.5 0-92.5v-70.8H28.5c-37.7 74.9-37.7 159.2 0 234.1L119 323.2z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M272 107.1c39.9-.6 78.1 13.8 107.3 40.6l80.1-80.1C415.3 25.3 345.5-1.3 272 0 166.2 0 73.9 60.9 28.5 150.2l90.5 70.8C140.6 155 200.9 107.1 272 107.1z"
+                  />
+                </svg>
                 Google
               </button>
             </div>
@@ -238,7 +245,7 @@ const LoginPage = () => {
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Don't have an account?
-              <Link to="/login" className="text-yellow-400 hover:text-yellow-500 ml-1">
+              <Link to="/register" className="text-yellow-400 hover:text-yellow-500 ml-1">
                 Sign Up
               </Link>
             </p>
@@ -246,7 +253,7 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LoginPage
+export default LoginPage;
