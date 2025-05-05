@@ -1,102 +1,82 @@
-// Simulated backend API for athlete profiles
-// In a real application, this would make HTTP requests to a backend server
+import axios from 'axios';
 
-// Get athlete profiles from localStorage
-const athleteProfiles = JSON.parse(localStorage.getItem("athleteProfiles")) || []
+const API_URL = import.meta.env.VITE_API_URL || 'https://athlixir-backend.onrender.com/api/athlete';
 
+// Log the API URL for debugging
+console.log('API_URL:', API_URL);
+
+// Save athlete profile
 export const saveAthleteProfile = async (profileData) => {
-  // Simulate API request delay
-  await new Promise((resolve) => setTimeout(resolve, 800))
-
-  // Check if profile already exists
-  const existingProfileIndex = athleteProfiles.findIndex((profile) => profile.email === profileData.email)
-
-  if (existingProfileIndex !== -1) {
-    // Update existing profile
-    athleteProfiles[existingProfileIndex] = {
-      ...athleteProfiles[existingProfileIndex],
-      ...profileData,
-      updatedAt: new Date().toISOString(),
-    }
-  } else {
-    // Create new profile
-    athleteProfiles.push({
-      ...profileData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    })
+  try {
+    console.log('Sending POST request to:', `${API_URL}/profile`);
+    const response = await axios.post(`${API_URL}/profile`, profileData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data; // Returns { success: true, athlete }
+  } catch (error) {
+    console.error('Save athlete profile error:', error.response?.data);
+    throw new Error(error.response?.data?.error || 'Failed to save athlete profile');
   }
+};
 
-  // Save to localStorage
-  localStorage.setItem("athleteProfiles", JSON.stringify(athleteProfiles))
-
-  return true
-}
-
+// Get athlete profile
 export const getAthleteProfile = async (email) => {
-  // Simulate API request delay
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  const profile = athleteProfiles.find((profile) => profile.email === email)
-
-  if (!profile) {
-    throw new Error("Profile not found")
+  try {
+    const response = await axios.get(`${API_URL}/profile/${email}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data; // Returns athlete profile data
+  } catch (error) {
+    throw new Error(error.response?.data?.error || 'Failed to fetch athlete profile');
   }
+};
 
-  return profile
-}
-
+// Update athlete profile
 export const updateAthleteProfile = async (profileData) => {
-  // Simulate API request delay
-  await new Promise((resolve) => setTimeout(resolve, 800))
-
-  // Find profile index
-  const profileIndex = athleteProfiles.findIndex((profile) => profile.email === profileData.email)
-
-  if (profileIndex === -1) {
-    throw new Error("Profile not found")
+  try {
+    const response = await axios.put(`${API_URL}/profile`, profileData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data; // Returns updated profile data
+  } catch (error) {
+    throw new Error(error.response?.data?.error || 'Failed to update athlete profile');
   }
+};
 
-  // Update profile
-  athleteProfiles[profileIndex] = {
-    ...athleteProfiles[profileIndex],
-    ...profileData,
-    updatedAt: new Date().toISOString(),
-  }
-
-  // Save to localStorage
-  localStorage.setItem("athleteProfiles", JSON.stringify(athleteProfiles))
-
-  return true
-}
-
+// Update profile photo
 export const updateProfilePhoto = async (email, photoData) => {
-  // Simulate API request delay
-  await new Promise((resolve) => setTimeout(resolve, 800))
-
-  // Find profile index
-  const profileIndex = athleteProfiles.findIndex((profile) => profile.email === email)
-
-  if (profileIndex === -1) {
-    throw new Error("Profile not found")
+  try {
+    const response = await axios.put(
+      `${API_URL}/profile/photo`,
+      { email, profilePhoto: photoData },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    );
+    return response.data; // Returns success status
+  } catch (error) {
+    throw new Error(error.response?.data?.error || 'Failed to update profile photo');
   }
+};
 
-  // Update profile with photo
-  athleteProfiles[profileIndex] = {
-    ...athleteProfiles[profileIndex],
-    profilePhoto: photoData,
-    updatedAt: new Date().toISOString(),
-  }
-
-  // Save to localStorage
-  localStorage.setItem("athleteProfiles", JSON.stringify(athleteProfiles))
-
-  return true
-}
-
+// Get all athlete profiles
 export const getAllAthleteProfiles = async () => {
-  // Simulate API request delay
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  return athleteProfiles
-}
+  try {
+    const response = await axios.get(`${API_URL}/profiles`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data; // Returns array of athlete profiles
+  } catch (error) {
+    throw new Error(error.response?.data?.error || 'Failed to fetch athlete profiles');
+  }
+};
