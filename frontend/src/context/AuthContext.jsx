@@ -1,31 +1,49 @@
+// context/AuthContext.jsx
 "use client";
 
 import { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
+import configureAxios from "../api/axiosConfig";
 import { initSocket } from "../api/socket";
-import { checkProfileCompletion, requestPasswordReset, verifyResetToken, resetPassword } from "../api/auth.jsx";
-
-const API_URL = `${import.meta.env.VITE_API_URL || 'https://athlixir-backend.onrender.com'}/auth`;
+import { API_CONFIG } from "../api/config";
+import { 
+  checkProfileCompletion, 
+  requestPasswordReset, 
+  verifyResetToken, 
+  resetPassword 
+} from "../api/auth.jsx";
 
 const AuthContext = createContext(null);
-
-// Axios interceptor for JWT
-axios.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [profileCompleted, setProfileCompleted] = useState(false);
   const [resetRequestSent, setResetRequestSent] = useState(false);
+
+  // Configure axios on component mount
+  useEffect(() => {
+    configureAxios();
+  }, []);
+
+  // Function to check profile completion
+  const checkUserProfileCompletion = async (user) => {
+    try {
+      // Only check if user is an athlete
+      if (user.userType === "athlete") {
+        const completed = await checkProfileCompletion(user.email);
+        setProfileCompleted(completed);
+      } else {
+        // For non-athletes, profile is considered complete
+        setProfileCompleted(true);
+      }
+    } catch (err) {
+      console.error("Failed to check profile completion:", err);
+      // Default to false for safety
+      setProfileCompleted(false);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     initSocket();
@@ -35,15 +53,9 @@ export const AuthProvider = ({ children }) => {
     if (storedUser && token) {
       const user = JSON.parse(storedUser);
       setCurrentUser(user);
-
-      if (user.userType === "athlete") {
-        checkProfileCompletion(user.email)
-          .then((completed) => setProfileCompleted(completed))
-          .catch((err) => console.error(err))
-          .finally(() => setLoading(false));
-      } else {
-        setLoading(false);
-      }
+      
+      // Use the dedicated function for profile completion check
+      checkUserProfileCompletion(user);
     } else {
       setLoading(false);
     }
@@ -51,16 +63,34 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password, userType) => {
     try {
-      const response = await axios.post(`${API_URL}/login`, { email, password, userType });
+      const url = `${API_CONFIG.AUTH_URL}/login`;
+      console.log("Login request to:", url);
+      
+      const response = await axios.post(url, { email, password, userType });
       const { token, user } = response.data;
+      
       setCurrentUser(user);
-      setProfileCompleted(user.profileCompleted || false);
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", token);
-      return { user, profileCompleted: user.profileCompleted };
+      
+      // Always check profile completion from backend for consistency
+      await checkUserProfileCompletion(user);
+      
+      return { user, profileCompleted };
     } catch (error) {
       console.error("Login error:", error);
-      throw new Error(error.response?.data?.error || "Authentication failed");
+      
+      // Enhanced error handling
+      if (error.response) {
+        // Server responded with an error code
+        throw new Error(error.response.data?.error || "Authentication failed");
+      } else if (error.request) {
+        // Request made but no response received (network error)
+        throw new Error("Network error - please check your connection or the server may be down");
+      } else {
+        // Error in request setup
+        throw new Error(error.message || "Authentication failed");
+      }
     }
   };
 
@@ -73,6 +103,13 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfileStatus = (status) => {
     setProfileCompleted(status);
+    
+    // Also update the user object in localStorage if needed
+    if (currentUser) {
+      const updatedUser = { ...currentUser, profileCompleted: status };
+      setCurrentUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    }
   };
 
   const forgotPassword = async (email) => {

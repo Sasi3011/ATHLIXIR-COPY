@@ -20,10 +20,10 @@ const LoginPage = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
+  
     try {
       const { profileCompleted } = await login(email, password, userType);
-
+  
       // Redirect based on profile completion status
       if (userType === "athlete" && !profileCompleted) {
         navigate("/athlete-details");
@@ -32,6 +32,7 @@ const LoginPage = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
+      // Display a more specific error message if available
       setError(error.message || "Invalid credentials. Please try again.");
     } finally {
       setLoading(false);
