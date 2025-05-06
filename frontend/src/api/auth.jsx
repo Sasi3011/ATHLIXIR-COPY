@@ -5,6 +5,7 @@ const API_URL = `${import.meta.env.VITE_API_URL || 'https://athlixir-backend.onr
 // Configure axios defaults
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
 // Log API_URL for debugging
 console.log('Auth API_URL:', API_URL);

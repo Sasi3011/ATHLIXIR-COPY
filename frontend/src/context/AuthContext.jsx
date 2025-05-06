@@ -5,7 +5,7 @@ import axios from "axios";
 import { initSocket } from "../api/socket";
 import { checkProfileCompletion, requestPasswordReset, verifyResetToken, resetPassword } from "../api/auth.jsx";
 
-const API_URL = `${import.meta.env.VITE_API_URL || 'https://athlixir-backend.onrender.com/api'}/auth`;
+const API_URL = `${import.meta.env.VITE_API_URL || 'https://athlixir-backend.onrender.com'}/auth`;
 
 const AuthContext = createContext(null);
 
