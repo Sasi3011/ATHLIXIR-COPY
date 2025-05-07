@@ -31,8 +31,20 @@ export const AuthProvider = ({ children }) => {
     try {
       // Only check if user is an athlete
       if (user.userType === "athlete") {
+        console.log('Checking profile completion for athlete:', user.email);
         const completed = await checkProfileCompletion(user.email);
+        console.log('Profile completion status from backend:', completed);
+        
+        // Update the user's profile completion status
         setProfileCompleted(completed);
+        
+        // Also update the user object in localStorage
+        if (completed !== user.profileCompleted) {
+          const updatedUser = { ...user, profileCompleted: completed };
+          setCurrentUser(updatedUser);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+          console.log('Updated user profile completion status to:', completed);
+        }
       } else {
         // For non-athletes, profile is considered complete
         setProfileCompleted(true);
