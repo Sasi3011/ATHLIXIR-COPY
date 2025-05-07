@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/auth': {
+      '/api': {
         target: 'https://athlixir-backend.onrender.com',
         changeOrigin: true,
         secure: false,
