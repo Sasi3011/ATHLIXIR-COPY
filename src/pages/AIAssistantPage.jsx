@@ -21,13 +21,13 @@ const AIAssistantPage = () => {
 
   // Suggested prompts for the AI
   const suggestedPrompts = [
-    "Tell me a fun fact",
-    "Write a poem",
-    "Explain quantum physics",
-    "Creative writing ideas",
-    "Help me solve a problem",
-    "Movie recommendations",
-    "Plan a trip",
+    "Give sports diet plan",
+    "Beginner running drills",
+    "Olympic medal tally",
+    "Famous Indian athletes",
+    "Top football clubs",
+    "Workout recovery tips",
+    "Training tips",
   ];
 
   useEffect(() => {
@@ -153,7 +153,7 @@ const AIAssistantPage = () => {
           <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col">
             {/* Main heading */}
             <div className="text-center px-4 pt-6 pb-4">
-              <h2 className="text-4xl font-bold text-gray-800">Ask Me Anything</h2>
+              <h2 className="text-4xl font-bold text-gray-800">Your Sports Assistant!!</h2>
             </div>
 
             {/* Chat container */}
