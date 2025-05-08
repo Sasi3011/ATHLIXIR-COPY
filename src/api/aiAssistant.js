@@ -12,11 +12,16 @@ export const generateAIResponse = async (query) => {
         body: JSON.stringify({
           contents: [
             {
-              parts: [{ text: query }],
               role: 'user',
+              parts: [
+                {
+                  text: `You are an AI assistant that only answers questions related to sports. If the question is not related to sports, respond with: "This assistant only handles sports-related queries." If the user asks about nearby sports clubs or clubs in a specific location, respond with information about sports clubs in the requested area. Now answer this: ${query}`,
+                },
+              ],
             },
           ],
         }),
+        
       }
     );
 
