@@ -1,86 +1,73 @@
-"use client"
-
-import { useState, useEffect, useRef } from "react"
-import { useNavigate } from "react-router-dom"
-import { useAuth } from "../context/AuthContext"
-import Sidebar from "../components/Sidebar"
-import { getAthleteProfile } from "../api/athletes"
-import { getPerformanceData } from "../api/performance"
-import { Mic, Paperclip, ArrowUp } from "lucide-react"
-import { generateAIResponse } from "../api/aiAssistant"
-import AI from "../assets/AI.jpg"
-// Import the PageHeader component
-import PageHeader from "../components/PageHeader"
+// src/pages/AIAssistantPage.jsx
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import Sidebar from "../components/Sidebar";
+import { Paperclip, ArrowUp, Mic } from "lucide-react";
+import { generateAIResponse } from "../api/aiAssistant";
+import AI from "../assets/AI.jpg";
+import PageHeader from "../components/PageHeader";
 
 const AIAssistantPage = () => {
-  const navigate = useNavigate()
-  const { currentUser } = useAuth()
-  const [athleteData, setAthleteData] = useState(null)
-  const [performanceData, setPerformanceData] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [inputMessage, setInputMessage] = useState("")
-  const [messages, setMessages] = useState([])
-  const [isTyping, setIsTyping] = useState(false)
-  const messagesEndRef = useRef(null)
-  const inputRef = useRef(null)
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [inputMessage, setInputMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
-  // Suggested topics for quick access
-  const suggestedTopics = [
-    "Training Plan",
-    "Injury Recovery",
-    "Nutrition Advice",
-    "Mental Health Support",
-    "Event Updates",
-    "Sponsorship Finder",
-    "Performance Tips",
-  ]
+  // Suggested prompts for the AI
+  const suggestedPrompts = [
+    "Tell me a fun fact",
+    "Write a poem",
+    "Explain quantum physics",
+    "Creative writing ideas",
+    "Help me solve a problem",
+    "Movie recommendations",
+    "Plan a trip",
+  ];
 
   useEffect(() => {
-    const fetchData = async () => {
+    const initializeChat = async () => {
+      setLoading(true);
       try {
-        if (currentUser && currentUser.email) {
-          const athleteProfile = await getAthleteProfile(currentUser.email)
-          setAthleteData(athleteProfile)
-
-          const performance = await getPerformanceData(currentUser.email)
-          setPerformanceData(performance)
-
-          // Add welcome message
-          setMessages([
-            {
-              id: 1,
-              sender: "ai",
-              text: `Hello ${athleteProfile?.fullName || "there"}! I'm your AI Assistant. How can I help you with your training, health, or career today?`,
-              timestamp: new Date(),
-            },
-          ])
-        }
+        // Add welcome message
+        setMessages([
+          {
+            id: 1,
+            sender: "ai",
+            text: "Hello! I'm your AI assistant. I can help answer questions, provide information, assist with creative tasks, and much more. What would you like to know?",
+            timestamp: new Date(),
+          },
+        ]);
       } catch (error) {
-        console.error("Error fetching data:", error)
-        setError("Failed to load data")
+        console.error("Error initializing chat:", error);
+        setError("Failed to initialize chat");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [currentUser])
+    initializeChat();
+  }, [currentUser]);
 
   // Scroll to bottom of messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   // Focus input on load
   useEffect(() => {
     if (!loading) {
-      inputRef.current?.focus()
+      inputRef.current?.focus();
     }
-  }, [loading])
+  }, [loading]);
 
   const handleSendMessage = async (text = inputMessage) => {
-    if (!text.trim()) return
+    if (!text.trim()) return;
 
     // Add user message to chat
     const userMessage = {
@@ -88,27 +75,30 @@ const AIAssistantPage = () => {
       sender: "user",
       text: text,
       timestamp: new Date(),
-    }
+    };
 
-    setMessages((prev) => [...prev, userMessage])
-    setInputMessage("")
-    setIsTyping(true)
+    setMessages((prev) => [...prev, userMessage]);
+    setInputMessage("");
+    setIsTyping(true);
 
     try {
-      // Generate AI response based on user message and athlete data
-      const response = await generateAIResponse(text, athleteData, performanceData)
+      // Generate AI response based on user message
+      const response = await generateAIResponse(text);
 
-      // Add AI response to chat
-      const aiMessage = {
-        id: messages.length + 2,
-        sender: "ai",
-        text: response,
-        timestamp: new Date(),
-      }
-
-      setMessages((prev) => [...prev, aiMessage])
+      // Add AI response to chat after a small delay to simulate thinking
+      setTimeout(() => {
+        const aiMessage = {
+          id: messages.length + 2,
+          sender: "ai",
+          text: response,
+          timestamp: new Date(),
+        };
+        
+        setMessages((prev) => [...prev, aiMessage]);
+        setIsTyping(false);
+      }, 800);
     } catch (error) {
-      console.error("Error generating AI response:", error)
+      console.error("Error generating AI response:", error);
 
       // Add error message
       const errorMessage = {
@@ -116,52 +106,55 @@ const AIAssistantPage = () => {
         sender: "ai",
         text: "I'm sorry, I encountered an error processing your request. Please try again.",
         timestamp: new Date(),
-      }
+      };
 
-      setMessages((prev) => [...prev, errorMessage])
-    } finally {
-      setIsTyping(false)
+      setMessages((prev) => [...prev, errorMessage]);
+      setIsTyping(false);
     }
-  }
+  };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
+      e.preventDefault();
+      handleSendMessage();
     }
-  }
+  };
 
-  const handleTopicClick = (topic) => {
-    handleSendMessage(`Tell me about ${topic}`)
-  }
+  const handlePromptClick = (prompt) => {
+    handleSendMessage(prompt);
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-400"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar activePage="carrier-assistant" />
+      <Sidebar activePage="ai-assistant" />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <div className="z-10 bg-white shadow">
-        <PageHeader title="AI Assistant" athleteData={athleteData} />
-      </div>
+          <PageHeader title="AI Assistant" />
+        </div>
 
         {/* Main content */}
         <main className="flex-1 relative bg-gray-50">
-          {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 mx-4 mt-4">{error}</div>}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 mx-4 mt-4">
+              {error}
+            </div>
+          )}
 
           <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col">
             {/* Main heading */}
             <div className="text-center px-4 pt-6 pb-4">
-            <h2 className="text-4xl font-bold text-gray-800">How Can I Assist You Today?</h2>
-          </div>
+              <h2 className="text-4xl font-bold text-gray-800">Ask Me Anything</h2>
+            </div>
 
             {/* Chat container */}
             <div className="flex-1 flex flex-col bg-white mx-4 rounded-lg shadow-md overflow-hidden">
@@ -180,7 +173,7 @@ const AIAssistantPage = () => {
                       )}
                       <div
                         className={`max-w-[70%] rounded-lg px-4 py-2 ${
-                          message.sender === "user" ? "bg-yellow-400 text-white" : "bg-gray-100 text-gray-800"
+                          message.sender === "user" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-800"
                         }`}
                       >
                         <p className="whitespace-pre-wrap">{message.text}</p>
@@ -188,12 +181,6 @@ const AIAssistantPage = () => {
                           {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                         </p>
                       </div>
-                      {message.sender === "ai" && (
-                      <div className="flex-shrink-0 mr-3">
-                        <img src={AI} alt="AI Assistant" className="h-8 w-8 rounded-full object-cover" />
-                      </div>
-                    )}
-
                     </div>
                   ))}
                   {isTyping && (
@@ -215,15 +202,15 @@ const AIAssistantPage = () => {
                 </div>
               </div>
 
-              {/* Suggested topics */}
+              {/* Suggested prompts */}
               <div className="px-4 py-3 border-t border-gray-200 flex flex-wrap justify-center gap-2">
-                {suggestedTopics.map((topic) => (
+                {suggestedPrompts.map((prompt) => (
                   <button
-                    key={topic}
-                    onClick={() => handleTopicClick(topic)}
+                    key={prompt}
+                    onClick={() => handlePromptClick(prompt)}
                     className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-sm text-gray-700 transition-colors"
                   >
-                    {topic}
+                    {prompt}
                   </button>
                 ))}
               </div>
@@ -240,15 +227,15 @@ const AIAssistantPage = () => {
                       value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      placeholder="Ask me anything about your training, health, or career!"
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
+                      placeholder="Ask me anything..."
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                       rows={1}
                     ></textarea>
                     <button
                       onClick={() => handleSendMessage()}
                       disabled={!inputMessage.trim()}
                       className={`absolute right-2 bottom-2 p-2 rounded-full ${
-                        inputMessage.trim() ? "bg-yellow-400 text-white" : "bg-gray-200 text-gray-400"
+                        inputMessage.trim() ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-400"
                       }`}
                     >
                       <ArrowUp className="h-5 w-5" />
@@ -264,7 +251,7 @@ const AIAssistantPage = () => {
         </main>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AIAssistantPage
+export default AIAssistantPage;
