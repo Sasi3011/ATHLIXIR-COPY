@@ -15,6 +15,7 @@ import AcademyLocatorPage from "./pages/AcademyLocatorPage"
 import SportsNewsPage from "./pages/SportsNewsPage"
 import SettingsPage from "./pages/SettingsPage"
 import { AuthProvider } from "./context/AuthContext"
+import { ThemeProvider } from "./context/ThemeContext"
 import ProtectedRoute from "./components/ProtectedRoute"
 import ForgotPasswordPage from "./pages/ForgotPasswordPage"
 import ResetPasswordPage from "./pages/ResetPasswordPage"
@@ -25,7 +26,8 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <Routes>
+        <ThemeProvider>
+          <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -144,6 +146,7 @@ function App() {
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </ThemeProvider>
       </AuthProvider>
     </Router>
   )

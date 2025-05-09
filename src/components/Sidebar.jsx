@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
 import Logo from "../assets/Logo.png"
 import { Link, useLocation } from "react-router-dom"
+import { useTheme } from "../context/ThemeContext"
 import {
   LayoutGrid,
   BarChart2,
@@ -20,15 +20,10 @@ import {
 
 const Sidebar = ({ activePage }) => {
   const location = useLocation()
-  const [darkMode, setDarkMode] = useState(false)
+  const { darkMode, toggleDarkMode } = useTheme()
 
   const isActive = (path) => {
     return location.pathname === path || activePage === path.substring(1)
-  }
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
-    // Add actual dark mode implementation here
   }
 
   const menuItems = [

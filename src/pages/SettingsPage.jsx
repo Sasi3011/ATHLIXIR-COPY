@@ -1,27 +1,44 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
+import { useTheme } from "../context/ThemeContext"
 import Sidebar from "../components/Sidebar"
 import PageHeader from "../components/PageHeader"
 import Footer from "../components/Footer"
 
 const SettingsPage = () => {
   const { user, logout } = useAuth()
+  const { darkMode, toggleDarkMode } = useTheme()
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
     phone: user?.phone || "",
     notifications: true,
-    darkMode: false,
+    darkMode: darkMode,
   })
+  
+  // Update form data when dark mode changes
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      darkMode: darkMode
+    }))
+  }, [darkMode])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
+    const newValue = type === "checkbox" ? checked : value
+    
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: newValue,
     })
+    
+    // Toggle dark mode when the dark mode checkbox is changed
+    if (name === "darkMode" && type === "checkbox") {
+      toggleDarkMode()
+    }
   }
 
   const handleSubmit = (e) => {

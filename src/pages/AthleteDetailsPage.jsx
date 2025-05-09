@@ -126,7 +126,7 @@ const AthleteDetailsPage = () => {
       const profileData = {
         userId: currentUser.id,
         email: currentUser.email,
-        fullName,
+        name: fullName, // Changed from fullName to name to match backend validation
         address,
         district,
         state,
@@ -134,15 +134,16 @@ const AthleteDetailsPage = () => {
         nationality,
         dateOfBirth,
         gender,
-        sportsCategory,
-        biography,
+        sport: sportsCategory, // Changed from sportsCategory to sport to match backend
+        bio: biography, // Changed from biography to bio to match backend
         yearsOfExperience,
         athleteType,
         languagesSpoken,
         medalsAndAwards,
         competingSince,
         goals,
-        profilePhoto, // Include the profile photo
+        profileImage: profilePhoto, // Changed from profilePhoto to profileImage to match backend
+        country: nationality, // Added country field which is expected by backend
       }
 
       await saveAthleteProfile(profileData)

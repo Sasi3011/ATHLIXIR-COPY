@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import Sidebar from "../components/Sidebar";
 import { Paperclip, ArrowUp, Mic } from "lucide-react";
 import { generateAIResponse } from "../api/aiAssistant";
@@ -11,6 +12,7 @@ import PageHeader from "../components/PageHeader";
 const AIAssistantPage = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const { darkMode } = useTheme();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [inputMessage, setInputMessage] = useState("");
@@ -133,7 +135,7 @@ const AIAssistantPage = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className={`flex h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
       <Sidebar activePage="ai-assistant" />
 
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -143,7 +145,7 @@ const AIAssistantPage = () => {
         </div>
 
         {/* Main content */}
-        <main className="flex-1 relative bg-gray-50">
+        <main className="flex-1 relative bg-gray-50 dark:bg-gray-900">
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 mx-4 mt-4">
               {error}
@@ -153,11 +155,11 @@ const AIAssistantPage = () => {
           <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col">
             {/* Main heading */}
             <div className="text-center px-4 pt-6 pb-4">
-              <h2 className="text-4xl font-bold text-gray-800">Your Sports Assistant!!</h2>
+              <h2 className="text-4xl font-bold text-gray-800 dark:text-gray-100">Your Sports Assistant!!</h2>
             </div>
 
             {/* Chat container */}
-            <div className="flex-1 flex flex-col bg-white mx-4 rounded-lg shadow-md overflow-hidden">
+            <div className="flex-1 flex flex-col bg-white dark:bg-gray-800 mx-4 rounded-lg shadow-md overflow-hidden">
               {/* Messages area */}
               <div className="flex-1 overflow-y-auto p-4">
                 <div className="space-y-4">
@@ -173,7 +175,7 @@ const AIAssistantPage = () => {
                       )}
                       <div
                         className={`max-w-[70%] rounded-lg px-4 py-2 ${
-                          message.sender === "user" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-800"
+                          message.sender === "user" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100"
                         }`}
                       >
                         <p className="whitespace-pre-wrap">{message.text}</p>
@@ -188,7 +190,7 @@ const AIAssistantPage = () => {
                       <div className="flex-shrink-0 mr-3">
                         <img src={AI} alt="AI Assistant" className="h-8 w-8 rounded-full object-cover" />
                       </div>
-                      <div className="bg-gray-100 rounded-lg px-4 py-2">
+                      <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-2">
                         <div className="flex space-x-1">
                           <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce"></div>
                           <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
@@ -203,12 +205,12 @@ const AIAssistantPage = () => {
               </div>
 
               {/* Suggested prompts */}
-              <div className="px-4 py-3 border-t border-gray-200 flex flex-wrap justify-center gap-2">
+              <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 flex flex-wrap justify-center gap-2">
                 {suggestedPrompts.map((prompt) => (
                   <button
                     key={prompt}
                     onClick={() => handlePromptClick(prompt)}
-                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-sm text-gray-700 transition-colors"
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-full text-sm text-gray-700 dark:text-gray-200 transition-colors"
                   >
                     {prompt}
                   </button>
@@ -216,7 +218,7 @@ const AIAssistantPage = () => {
               </div>
 
               {/* Input area */}
-              <div className="border-t border-gray-200 p-4">
+              <div className="border-t border-gray-200 dark:border-gray-700 p-4">
                 <div className="flex items-end space-x-2">
                   <button className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100">
                     <Paperclip className="h-5 w-5" />
@@ -228,7 +230,7 @@ const AIAssistantPage = () => {
                       onChange={(e) => setInputMessage(e.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder="Ask me anything..."
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none dark:bg-gray-700 dark:text-gray-100"
                       rows={1}
                     ></textarea>
                     <button
