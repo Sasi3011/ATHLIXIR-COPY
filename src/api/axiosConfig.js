@@ -35,6 +35,7 @@ const configureAxios = () => {
       const token = localStorage.getItem("token");
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+        config.headers["x-auth-token"] = token; // Add x-auth-token header for backend compatibility
       }
       return config;
     },

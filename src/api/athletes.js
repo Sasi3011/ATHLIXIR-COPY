@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/athlete` : 'https://athlixir-backend.onrender.com/api/athlete';
+// Check if VITE_API_URL ends with /api to avoid duplication
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = BASE_URL.endsWith('/api') ? `${BASE_URL}/athletes` : `${BASE_URL}/api/athletes`;
 
 // Log the API URL for debugging
 console.log('Athlete API_URL:', API_URL);
@@ -9,9 +11,12 @@ console.log('Athlete API_URL:', API_URL);
 export const saveAthleteProfile = async (profileData) => {
   try {
     console.log('Sending POST request to:', `${API_URL}/profile`);
+    const token = localStorage.getItem('token');
+    
     const response = await axios.post(`${API_URL}/profile`, profileData, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
+        'x-auth-token': token
       },
     });
     return response.data; // Returns { success: true, athlete }
@@ -25,9 +30,12 @@ export const saveAthleteProfile = async (profileData) => {
 export const getAthleteProfile = async (email) => {
   try {
     console.log('Fetching profile for:', email);
+    const token = localStorage.getItem('token');
+    
     const response = await axios.get(`${API_URL}/profile/${email}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
+        'x-auth-token': token
       },
     });
     return response.data; // Returns athlete profile data
@@ -41,9 +49,12 @@ export const getAthleteProfile = async (email) => {
 export const updateAthleteProfile = async (profileData) => {
   try {
     console.log('Updating profile for:', profileData.email);
+    const token = localStorage.getItem('token');
+    
     const response = await axios.put(`${API_URL}/profile`, profileData, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
+        'x-auth-token': token
       },
     });
     return response.data; // Returns updated profile data
@@ -57,12 +68,15 @@ export const updateAthleteProfile = async (profileData) => {
 export const updateProfilePhoto = async (email, photoData) => {
   try {
     console.log('Updating profile photo for:', email);
+    const token = localStorage.getItem('token');
+    
     const response = await axios.put(
       `${API_URL}/profile/photo`,
       { email, profilePhoto: photoData },
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${token}`,
+          'x-auth-token': token
         },
       }
     );
@@ -77,9 +91,12 @@ export const updateProfilePhoto = async (email, photoData) => {
 export const getAllAthleteProfiles = async () => {
   try {
     console.log('Fetching all athlete profiles');
+    const token = localStorage.getItem('token');
+    
     const response = await axios.get(`${API_URL}/profiles`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
+        'x-auth-token': token
       },
     });
     return response.data; // Returns array of athlete profiles
