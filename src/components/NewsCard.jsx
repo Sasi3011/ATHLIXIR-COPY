@@ -30,35 +30,34 @@ const NewsCard = ({ article, size = "large" }) => {
 
   if (size === "small") {
     return (
-      <div className="flex flex-col mb-2 sm:mb-4">
-        <div className="text-xs sm:text-sm text-gray-500 mb-1">{formattedDate}</div>
-        <h3 className="text-sm sm:text-base font-semibold mb-1 line-clamp-2">{title}</h3>
+      <div className="flex flex-col mb-4">
+        <div className="text-sm text-gray-500 mb-1">{formattedDate}</div>
+        <h3 className="text-base font-semibold mb-1">{title}</h3>
       </div>
     )
   }
 
   return (
-    <div className="mb-4 sm:mb-6 md:mb-8 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+    <div className="mb-8">
       <div className="relative">
           <img
           src={(urlToImage?.startsWith("http://") ? urlToImage.replace("http://", "https://") : urlToImage) || "/placeholder.jpg"}
           alt={title}
-          className="w-full h-40 sm:h-48 md:h-56 object-cover"
-          loading="lazy"
+          className="w-full h-56 object-cover rounded-lg"
           onError={(e) => {
             e.target.onerror = null
             e.target.src = "/placeholder.jpg"
           }}
         />
 
-        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-black bg-opacity-70 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
+        <div className="absolute top-3 right-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm">
           {sportCategory}
         </div>
       </div>
-      <div className="p-3 sm:p-4">
-        <div className="text-xs sm:text-sm text-gray-500 mb-1">{formattedDate}</div>
-        <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 line-clamp-2">{title}</h3>
-        <p className="text-xs sm:text-sm text-gray-700 line-clamp-2 sm:line-clamp-3">{description}</p>
+      <div className="mt-3">
+        <div className="text-sm text-gray-500 mb-1">{formattedDate}</div>
+        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <p className="text-gray-700 line-clamp-3">{description}</p>
       </div>
     </div>
   )

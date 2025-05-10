@@ -206,30 +206,86 @@ const SportsNewsPage = () => {
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {newsArticles.map((article, index) => (
-                    <div key={index} className="relative">
-                      {article.isToday && (
-                        <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-tr-lg rounded-bl-lg z-10">
-                          Current News
+                <>
+                  {/* Featured News Articles */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {newsArticles.map((article, index) => (
+                      <div key={index} className="relative">
+                        {article.isToday && (
+                          <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-tr-lg rounded-bl-lg z-10">
+                            Current News
+                          </div>
+                        )}
+                        {article.isRecent && !article.isToday && (
+                          <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-tr-lg rounded-bl-lg z-10">
+                            Recent
+                          </div>
+                        )}
+                        <NewsCard article={article} />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Pagination Controls */}
+                  <div className="flex justify-center mb-8">
+                    <button
+                      onClick={handlePrevPage}
+                      disabled={currentPage === 1}
+                      className="flex items-center justify-center w-10 h-10 rounded-md bg-gray-200 text-gray-700 mr-2 disabled:opacity-50"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={handleNextPage}
+                      disabled={currentPage === totalPages}
+                      className="flex items-center justify-center w-10 h-10 rounded-md bg-gray-800 text-white disabled:opacity-50"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* Additional News Articles */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {newsArticles.slice(2, 5).map((article, index) => (
+                      <div
+                        key={index}
+                        className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer"
+                      >
+                        <div className="aspect-video rounded-md overflow-hidden mb-3">
+                          <img
+                            src={article.urlToImage || "https://placehold.co/600x400/gray/white?text=No+Image"}
+                            alt={article.title || 'Sports News'}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "https://placehold.co/600x400/gray/white?text=No+Image";
+                            }}
+                          />
                         </div>
-                      )}
-                      {article.isRecent && !article.isToday && (
-                        <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-tr-lg rounded-bl-lg z-10">
-                          Recent
+                        <div className="text-xs text-gray-500 mb-1">
+                          {article.source?.name || 'Sports'} • 
+                          {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("en-US", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          }) : new Date().toLocaleDateString("en-US", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
                         </div>
-                      )}
-                      <NewsCard article={article} />
-                    </div>
-                  ))}
-                </div>
+                        <h3 className="font-semibold mb-2 line-clamp-2">{article.title || 'Sports News'}</h3>
+                      </div>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
 
-            {/* Sidebar Content - Takes 1/3 of space on desktop */}
-            <div className="order-1 md:order-2">
-              {/* Desktop Search Form */}
-              <form onSubmit={handleSearch} className="mb-6 hidden md:block">
+            {/* Sidebar Content */}
+            <div>
+              {/* Search Form (Desktop) */}
+              <form onSubmit={handleSearch} className="mb-8 hidden lg:block">
                 <div className="relative">
                   <input
                     type="text"
@@ -242,13 +298,21 @@ const SportsNewsPage = () => {
                 </div>
               </form>
 
-              {/* Desktop Categories */}
-              <div className="mb-6 hidden md:block">
+              {/* Categories */}
+              <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold">Category</h3>
+                  <div className="flex">
+                    <button className="p-1 text-gray-400 hover:text-gray-600">
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button className="p-1 text-gray-400 hover:text-gray-600">
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
 
-                <div className="space-y-1">
+                <div>
                   <CategoryItem
                     category="All"
                     icon={<BasketballIcon className="w-5 h-5 text-yellow-600" />}
@@ -268,15 +332,15 @@ const SportsNewsPage = () => {
                 </div>
               </div>
 
-              {/* Trending News - Mobile & Desktop */}
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <h3 className="text-base sm:text-lg font-semibold mb-4">Trending News</h3>
+              {/* Trending News */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Trending News</h3>
 
                 {loading ? (
                   <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
                       <div key={i} className="flex items-center animate-pulse">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gray-200 rounded-md mr-3 flex-shrink-0"></div>
+                        <div className="w-16 h-16 bg-gray-200 rounded-md mr-3"></div>
                         <div className="flex-1">
                           <div className="bg-gray-200 h-3 w-1/2 mb-2"></div>
                           <div className="bg-gray-200 h-4 w-3/4"></div>
@@ -285,15 +349,15 @@ const SportsNewsPage = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="space-y-3 sm:space-y-4">
+                  <>
                     {trendingNews.map((item, index) => (
                       <TrendingNewsItem key={index} item={item} />
                     ))}
 
-                    <button className="w-full py-2 bg-yellow-400 text-yellow-800 text-sm font-medium rounded-lg flex items-center justify-center mt-4 hover:bg-yellow-500 transition-colors">
+                    <button className="w-full py-2 bg-yellow-400 text-yellow-800 font-medium rounded-lg flex items-center justify-center mt-4 hover:bg-yellow-500 transition-colors">
                       More <ChevronRight className="w-4 h-4 ml-1" />
                     </button>
-                  </div>
+                  </>
                 )}
               </div>
             </div>
