@@ -17,13 +17,7 @@ import Sidebar from "../components/Sidebar"
 import NewsCard from "../components/NewsCard"
 import TrendingNewsItem from "../components/TrendingNewsItem"
 import CategoryItem from "../components/CategoryItem"
-import {
-  getAllSportsNews,
-  getNewsByCategory,
-  getTrendingNews,
-  searchNews,
-  getFallbackNewsData,
-} from "../api/sportsNews"
+import { getAllSportsNews, getNewsByCategory, getTrendingNews, searchNews, getFallbackNewsData } from "../api/sportsNews"
 
 const SportsNewsPage = () => {
   // Existing state
@@ -60,25 +54,67 @@ const SportsNewsPage = () => {
         response = await getNewsByCategory(activeCategory, currentPage)
       }
 
-      setNewsArticles(response.articles || [])
-      setTotalPages(Math.ceil((response.totalResults || 0) / 10))
+      // Check if we have valid articles data - GNews API format
+      if (response && response.articles && Array.isArray(response.articles)) {
+        // Make sure each article has valid data - transform GNews format to our format
+        const processedArticles = response.articles.map(article => ({
+          title: article.title || 'Sports News',
+          urlToImage: article.image || 'https://placehold.co/600x400/gray/white?text=Sports+News',
+          source: { name: article.source?.name || 'Sports' },
+          publishedAt: article.publishedAt || new Date().toISOString(),
+          description: article.description || '',
+          content: article.content || '',
+          url: article.url || '#'
+        }))
+        setNewsArticles(processedArticles)
+        setTotalPages(Math.ceil((response.totalArticles || processedArticles.length) / 10))
+      } else if (response && Array.isArray(response)) {
+        // Handle case where response might be an array directly
+        const processedArticles = response.map(article => ({
+          title: article.title || 'Sports News',
+          urlToImage: article.image || article.urlToImage || 'https://placehold.co/600x400/gray/white?text=Sports+News',
+          source: { name: article.source?.name || 'Sports' },
+          publishedAt: article.publishedAt || new Date().toISOString(),
+          description: article.description || '',
+          content: article.content || '',
+          url: article.url || '#'
+        }))
+        setNewsArticles(processedArticles)
+        setTotalPages(Math.ceil(processedArticles.length / 10))
+      } else {
+        // Use fallback data from getFallbackNewsData()
+        const fallbackData = await getFallbackNewsData()
+        setNewsArticles(fallbackData.articles || [])
+        setTotalPages(1)
+      }
 
       // Fetch trending news only on first load or category change
       if (currentPage === 1) {
         const trendingResponse = await getTrendingNews()
 
         // Transform the trending news data to match our component structure
-        const transformedTrending =
-          trendingResponse.articles?.slice(0, 5).map((article) => ({
-            tag: `#${article.source.name.split(" ")[0]}`,
-            date: new Date(article.publishedAt).toLocaleDateString("en-US", {
+        let transformedTrending = [];
+        
+        if (trendingResponse && trendingResponse.articles && Array.isArray(trendingResponse.articles)) {
+          transformedTrending = trendingResponse.articles.slice(0, 5).map((article) => ({
+            tag: `#${article.source && article.source.name ? article.source.name.split(" ")[0] : 'Sports'}`,
+            date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("en-US", {
               day: "numeric",
               month: "short",
               year: "numeric",
-            }),
-            title: article.title,
-            image: article.urlToImage,
-          })) || []
+            }) : new Date().toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }),
+            title: article.title || 'Sports News',
+            image: article.image || article.urlToImage || 'https://placehold.co/300x200/gray/white?text=Sports+News',
+          }));
+        } else if (trendingResponse && trendingResponse.trending && Array.isArray(trendingResponse.trending)) {
+          // Use fallback data directly if it's in the right format
+          transformedTrending = trendingResponse.trending;
+        }
+        
+        // If we still don't have trending news, use fallback
+        if (transformedTrending.length === 0) {
+          transformedTrending = getFallbackNewsData().trending;
+        }
 
         setTrendingNews(transformedTrending)
       }
@@ -170,55 +206,30 @@ const SportsNewsPage = () => {
                   ))}
                 </div>
               ) : (
-                <>
-                  {/* Featured News Articles */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    {newsArticles.slice(0, 2).map((article, index) => (
-                      <NewsCard key={index} article={article} />
-                    ))}
-                  </div>
-
-                  {/* Pagination Controls */}
-                  <div className="flex justify-center mb-8">
-                    <button
-                      onClick={handlePrevPage}
-                      disabled={currentPage === 1}
-                      className="flex items-center justify-center w-10 h-10 rounded-md bg-gray-200 text-gray-700 mr-2 disabled:opacity-50"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={handleNextPage}
-                      disabled={currentPage === totalPages}
-                      className="flex items-center justify-center w-10 h-10 rounded-md bg-gray-800 text-white disabled:opacity-50"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  {/* Additional News Articles */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {newsArticles.slice(2, 5).map((article, index) => (
-                      <div key={index} className="border-t pt-4">
-                        <div className="text-sm text-gray-500 mb-2">
-                          {new Date(article.publishedAt).toLocaleDateString("en-US", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {newsArticles.map((article, index) => (
+                    <div key={index} className="relative">
+                      {article.isToday && (
+                        <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-tr-lg rounded-bl-lg z-10">
+                          Current News
                         </div>
-                        <h3 className="font-semibold mb-2 line-clamp-2">{article.title}</h3>
-                      </div>
-                    ))}
-                  </div>
-                </>
+                      )}
+                      {article.isRecent && !article.isToday && (
+                        <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-tr-lg rounded-bl-lg z-10">
+                          Recent
+                        </div>
+                      )}
+                      <NewsCard article={article} />
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
 
-            {/* Sidebar Content */}
-            <div>
-              {/* Search Form (Desktop) */}
-              <form onSubmit={handleSearch} className="mb-8 hidden lg:block">
+            {/* Sidebar Content - Takes 1/3 of space on desktop */}
+            <div className="order-1 md:order-2">
+              {/* Desktop Search Form */}
+              <form onSubmit={handleSearch} className="mb-6 hidden md:block">
                 <div className="relative">
                   <input
                     type="text"
@@ -231,21 +242,13 @@ const SportsNewsPage = () => {
                 </div>
               </form>
 
-              {/* Categories */}
-              <div className="mb-8">
+              {/* Desktop Categories */}
+              <div className="mb-6 hidden md:block">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold">Category</h3>
-                  <div className="flex">
-                    <button className="p-1 text-gray-400 hover:text-gray-600">
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button className="p-1 text-gray-400 hover:text-gray-600">
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </div>
                 </div>
 
-                <div>
+                <div className="space-y-1">
                   <CategoryItem
                     category="All"
                     icon={<BasketballIcon className="w-5 h-5 text-yellow-600" />}
@@ -265,15 +268,15 @@ const SportsNewsPage = () => {
                 </div>
               </div>
 
-              {/* Trending News */}
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Trending News</h3>
+              {/* Trending News - Mobile & Desktop */}
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <h3 className="text-base sm:text-lg font-semibold mb-4">Trending News</h3>
 
                 {loading ? (
                   <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
                       <div key={i} className="flex items-center animate-pulse">
-                        <div className="w-16 h-16 bg-gray-200 rounded-md mr-3"></div>
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gray-200 rounded-md mr-3 flex-shrink-0"></div>
                         <div className="flex-1">
                           <div className="bg-gray-200 h-3 w-1/2 mb-2"></div>
                           <div className="bg-gray-200 h-4 w-3/4"></div>
@@ -282,15 +285,15 @@ const SportsNewsPage = () => {
                     ))}
                   </div>
                 ) : (
-                  <>
+                  <div className="space-y-3 sm:space-y-4">
                     {trendingNews.map((item, index) => (
                       <TrendingNewsItem key={index} item={item} />
                     ))}
 
-                    <button className="w-full py-2 bg-yellow-400 text-yellow-800 font-medium rounded-lg flex items-center justify-center mt-4 hover:bg-yellow-500 transition-colors">
+                    <button className="w-full py-2 bg-yellow-400 text-yellow-800 text-sm font-medium rounded-lg flex items-center justify-center mt-4 hover:bg-yellow-500 transition-colors">
                       More <ChevronRight className="w-4 h-4 ml-1" />
                     </button>
-                  </>
+                  </div>
                 )}
               </div>
             </div>
